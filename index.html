@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0f1a">
+<meta name="description" content="Professional Renewable Energy Engineering Learning PWA — Solar, Wind, Hydro, Grid Integration, SCADA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RE Guide">
+<link rel="manifest" href="#" id="manifest-link">
+<title>Renewable Energy Engineering Guide</title>
+<style>
+  /* ===================== DESIGN TOKENS ===================== */
+  :root {
+    --font-mono: 'Courier New', 'Lucida Console', monospace;
+    --font-sans: 'Georgia', 'Times New Roman', serif;
+
+    /* 4 font sizes only */
+    --fs-sm: 11px;
+    --fs-base: 14px;
+    --fs-md: 18px;
+    --fs-lg: 26px;
+
+    /* 8px grid */
+    --sp1: 8px;
+    --sp2: 16px;
+    --sp3: 24px;
+    --sp4: 32px;
+    --sp5: 40px;
+    --sp6: 48px;
+
+    /* Dark theme */
+    --bg: #06090f;
+    --bg2: #0d1421;
+    --bg3: #111c2e;
+    --bg4: #162236;
+    --surface: #192840;
+    --surface2: #1f3050;
+    --border: #2a4060;
+    --border2: #3a5580;
+
+    --accent: #00d4ff;
+    --accent2: #00ff88;
+    --accent3: #ffaa00;
+    --accent4: #ff4466;
+    --accent5: #9944ff;
+
+    --text: #e8f0ff;
+    --text2: #a0b8d8;
+    --text3: #607898;
+
+    --nav-h: 64px;
+    --nav-bar: 24px;
+    --header-h: 56px;
+
+    /* WCAG AAA compliant colors */
+    --aaa-text: #ffffff;
+    --aaa-text2: #c8daf0;
+    --aaa-accent: #4dd8ff;
+  }
+
+  [data-theme="light"] {
+    --bg: #f0f4f8;
+    --bg2: #e4ecf5;
+    --bg3: #d8e4f0;
+    --bg4: #ccd8e8;
+    --surface: #ffffff;
+    --surface2: #f8fafc;
+    --border: #b0c8e0;
+    --border2: #90aac8;
+    --text: #0a1428;
+    --text2: #2a3c58;
+    --text3: #4a6080;
+    --aaa-text: #000000;
+    --aaa-text2: #1a2a40;
+    --aaa-accent: #0068a0;
+  }
+
+  /* ===================== RESET ===================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: var(--nav-h);
+  }
+
+  /* ===================== ACCESSIBILITY ===================== */
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ===================== SCROLLBAR ===================== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ===================== TYPOGRAPHY ===================== */
+  h1 { font-size: var(--fs-lg); font-family: var(--font-mono); color: var(--aaa-text); letter-spacing: -0.5px; line-height: 1.2; }
+  h2 { font-size: var(--fs-md); font-family: var(--font-mono); color: var(--aaa-text); letter-spacing: -0.3px; }
+  h3 { font-size: var(--fs-base); font-family: var(--font-mono); color: var(--aaa-text2); text-transform: uppercase; letter-spacing: 1px; }
+  p, li, td, th, label { font-size: var(--fs-base); font-family: var(--font-sans); color: var(--text2); }
+  .caption { font-size: var(--fs-sm); font-family: var(--font-mono); color: var(--text3); }
+  code, .mono { font-family: var(--font-mono); font-size: var(--fs-sm); }
+
+  /* ===================== HEADER ===================== */
+  #app-header {
+    position: sticky; top: 0; z-index: 100;
+    height: var(--header-h);
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--sp2);
+    backdrop-filter: blur(8px);
+  }
+  .header-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-base);
+    color: var(--accent);
+    display: flex; align-items: center; gap: var(--sp1);
+  }
+  .header-title span { color: var(--text3); }
+
+  .theme-toggle {
+    min-height: 44px; min-width: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: var(--fs-md);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+  /* ===================== BOTTOM NAV ===================== */
+  #bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 200;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    min-height: 44px;
+    position: relative;
+    transition: color 0.2s;
+    padding: 0;
+    border-top: 2px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text2); }
+  .nav-item.active {
+    color: var(--accent);
+    border-top: 2px solid var(--accent);
+    box-shadow: 0 -2px 12px rgba(0,212,255,0.25);
+  }
+  .nav-icon {
+    font-size: 18px;
+    line-height: 1;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .nav-item.active .nav-icon {
+    background: rgba(0,212,255,0.12);
+  }
+  .nav-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    line-height: 1;
+  }
+
+  /* ===================== PAGES ===================== */
+  .page { display: none; min-height: calc(100vh - var(--header-h) - var(--nav-h)); }
+  .page.active { display: block; }
+  .page-inner { padding: var(--sp2); max-width: 900px; margin: 0 auto; }
+
+  /* ===================== MODULE CARDS ===================== */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sp2);
+    margin-top: var(--sp2);
+  }
+  .module-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--sp2);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 44px;
+  }
+  .module-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+  .module-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,212,255,0.1);
+  }
+  .module-card:hover::before { background: var(--accent); }
+  .mc-num { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); margin-bottom: var(--sp1); }
+  .mc-title { font-family: var(--font-mono); font-size: var(--fs-base); color: var(--aaa-text); margin-bottom: var(--sp1); }
+  .mc-desc { font-size: var(--fs-sm); color: var(--text2); line-height: 1.5; }
+  .mc-tag {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: var(--sp1);
+    border: 1px solid;
+  }
+  .tag-solar { color: var(--accent3); border-color: rgba(255,170,0,0.3); background: rgba(255,170,0,0.07); }
+  .tag-wind { color: var(--accent); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.07); }
+  .tag-hydro { color: var(--accent2); border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.07); }
+  .tag-power { color: var(--accent5); border-color: rgba(153,68,255,0.3); background: rgba(153,68,255,0.07); }
+  .tag-scada { color: var(--accent4); border-color: rgba(255,68,102,0.3); background: rgba(255,68,102,0.07); }
+  .tag-grid { color: var(--aaa-accent); border-color: rgba(77,216,255,0.3); background: rgba(77,216,255,0.07); }
+
+  /* ===================== LESSON VIEW ===================== */
+  #lesson-view {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 300;
+    background: var(--bg);
+    overflow-y: auto;
+    display: none;
+  }
+  #lesson-view.open { display: block; }
+  .lesson-header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: var(--sp2);
+    display: flex; align-items: center; gap: var(--sp2);
+  }
+  .btn-back {
+    min-height: 44px; min-width: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: var(--fs-md);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+  .lesson-title { font-family: var(--font-mono); font-size: var(--fs-base); color: var(--aaa-text); }
+  .lesson-content { padding: var(--sp3) var(--sp2); max-width: 800px; margin: 0 auto; }
+
+  /* ===================== EXPANDABLE SECTIONS ===================== */
+  .section-group { margin-bottom: var(--sp2); }
+  .section-toggle {
+    width: 100%; text-align: left;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: var(--sp2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 44px;
+    color: var(--text);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .section-toggle:hover { background: var(--surface); border-color: var(--border2); }
+  .section-toggle.open { border-color: var(--accent); background: var(--surface); }
+  .toggle-label { font-family: var(--font-mono); font-size: var(--fs-base); color: var(--aaa-text2); }
+  .toggle-icon { font-size: var(--fs-base); transition: transform 0.2s; flex-shrink: 0; }
+  .section-toggle.open .toggle-icon { transform: rotate(180deg); }
+  .section-body {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: var(--sp2);
+  }
+  .section-body.open { display: block; }
+
+  /* ===================== CONTENT ELEMENTS ===================== */
+  .info-box {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+  }
+  .warn-box {
+    background: rgba(255,170,0,0.08);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 6px 6px 0;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+  }
+  .danger-box {
+    background: rgba(255,68,102,0.08);
+    border-left: 3px solid var(--accent4);
+    border-radius: 0 6px 6px 0;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+  }
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-base);
+    color: var(--accent2);
+    text-align: center;
+  }
+  .formula-box .formula-label { font-size: var(--fs-sm); color: var(--text3); margin-bottom: var(--sp1); text-align: left; }
+
+  .content-para { margin-bottom: var(--sp2); color: var(--text2); line-height: 1.7; }
+  .content-para strong { color: var(--aaa-text); font-weight: bold; }
+
+  ul.tech-list { list-style: none; padding: 0; margin: var(--sp2) 0; }
+  ul.tech-list li {
+    padding: var(--sp1) 0 var(--sp1) var(--sp3);
+    position: relative;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  ul.tech-list li:last-child { border-bottom: none; }
+  ul.tech-list li::before {
+    content: '▸';
+    position: absolute; left: var(--sp1);
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+
+  /* ===================== TABLES ===================== */
+  .table-wrap { overflow-x: auto; margin: var(--sp2) 0; border-radius: 6px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--surface);
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    color: var(--accent); text-align: left;
+    padding: var(--sp1) var(--sp2);
+    border-bottom: 1px solid var(--border2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  td {
+    padding: var(--sp1) var(--sp2);
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-base);
+    color: var(--text2);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); color: var(--text); }
+
+  /* ===================== DIAGRAMS ===================== */
+  .diagram {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+    overflow-x: auto;
+  }
+  .diagram-title { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); margin-bottom: var(--sp2); text-transform: uppercase; letter-spacing: 1px; }
+  .flow-wrap { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+  .flow-node {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    color: var(--aaa-text2);
+    text-align: center;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .flow-node.highlight { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
+  .flow-node.warn { border-color: var(--accent3); color: var(--accent3); background: rgba(255,170,0,0.08); }
+  .flow-node.success { border-color: var(--accent2); color: var(--accent2); background: rgba(0,255,136,0.08); }
+  .flow-node.danger { border-color: var(--accent4); color: var(--accent4); background: rgba(255,68,102,0.08); }
+  .flow-arrow {
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    color: var(--text3); padding: 0 4px; flex-shrink: 0;
+  }
+  .flow-label { font-size: var(--fs-sm); color: var(--text3); text-align: center; margin-top: 2px; font-family: var(--font-mono); }
+
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--sp1);
+    margin-top: var(--sp1);
+  }
+  .d-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: var(--sp1);
+    text-align: center;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    color: var(--text2);
+  }
+  .d-block.d-accent { border-color: var(--accent); color: var(--accent); }
+  .d-block.d-green { border-color: var(--accent2); color: var(--accent2); }
+  .d-block.d-yellow { border-color: var(--accent3); color: var(--accent3); }
+  .d-block.d-red { border-color: var(--accent4); color: var(--accent4); }
+  .d-block.d-purple { border-color: var(--accent5); color: var(--accent5); }
+
+  .vertical-flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .v-arrow { font-family: var(--font-mono); color: var(--text3); font-size: var(--fs-base); line-height: 1; padding: 2px; }
+
+  /* ===================== QUIZ ===================== */
+  .quiz-section {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--sp2);
+    margin: var(--sp3) 0;
+  }
+  .quiz-q { font-family: var(--font-mono); font-size: var(--fs-base); color: var(--aaa-text); margin-bottom: var(--sp2); }
+  .quiz-num { color: var(--accent3); margin-right: var(--sp1); }
+  .quiz-options { display: flex; flex-direction: column; gap: var(--sp1); }
+  .quiz-opt {
+    min-height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: var(--sp1) var(--sp2);
+    cursor: pointer;
+    display: flex; align-items: center; gap: var(--sp1);
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    color: var(--text2);
+  }
+  .quiz-opt:hover { border-color: var(--border2); background: var(--surface2); }
+  .quiz-opt.correct { border-color: var(--accent2); background: rgba(0,255,136,0.08); color: var(--accent2); }
+  .quiz-opt.wrong { border-color: var(--accent4); background: rgba(255,68,102,0.08); color: var(--accent4); }
+  .opt-letter { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); min-width: 20px; }
+  .quiz-feedback { margin-top: var(--sp2); padding: var(--sp1) var(--sp2); border-radius: 6px; font-family: var(--font-mono); font-size: var(--fs-sm); display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(0,255,136,0.1); color: var(--accent2); border: 1px solid var(--accent2); }
+  .quiz-feedback.bad { background: rgba(255,68,102,0.1); color: var(--accent4); border: 1px solid var(--accent4); }
+
+  /* ===================== CHECKLIST ===================== */
+  .checklist { list-style: none; padding: 0; margin: var(--sp2) 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: var(--sp1);
+    padding: var(--sp1) 0;
+    border-bottom: 1px solid var(--border);
+    min-height: 44px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    min-width: 20px; height: 20px;
+    border: 2px solid var(--border2);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .check-box.checked { background: var(--accent2); border-color: var(--accent2); color: #000; font-size: 12px; }
+  .check-label { font-size: var(--fs-base); color: var(--text2); cursor: pointer; }
+  .check-label.done { text-decoration: line-through; color: var(--text3); }
+
+  /* ===================== LOG SIMULATION ===================== */
+  .log-grid {
+    display: grid;
+    grid-template-columns: 130px 80px 1fr 80px;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+  }
+  .log-header {
+    background: var(--surface);
+    padding: var(--sp1) var(--sp2);
+    color: var(--accent);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .log-cell {
+    padding: var(--sp1) var(--sp2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    color: var(--text2);
+  }
+  .log-row-new .log-cell { background: rgba(0,212,255,0.04); }
+  .log-cell.ts { color: var(--text3); }
+  .log-cell.lvl-info { color: var(--accent); }
+  .log-cell.lvl-warn { color: var(--accent3); }
+  .log-cell.lvl-err { color: var(--accent4); }
+  .log-cell.lvl-ok { color: var(--accent2); }
+  .log-cell.msg { color: var(--text2); }
+  .log-cell.val { font-weight: bold; }
+  .log-controls { display: flex; gap: var(--sp1); margin-bottom: var(--sp1); flex-wrap: wrap; }
+  .btn-sm {
+    min-height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 0 var(--sp2);
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    transition: border-color 0.15s;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent); color: #000; border-color: var(--accent);
+    font-weight: bold;
+  }
+  .btn-primary:hover { background: #00b8d9; color: #000; }
+
+  /* ===================== FORM ===================== */
+  .form-group { margin-bottom: var(--sp2); }
+  .form-label { display: block; font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); margin-bottom: var(--sp1); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    min-height: 44px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--aaa-text2);
+    padding: var(--sp1) var(--sp2);
+    font-family: var(--font-sans); font-size: var(--fs-base);
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute; right: var(--sp2); top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-family: var(--font-mono);
+    pointer-events: none;
+  }
+  .form-textarea { min-height: 88px; resize: vertical; }
+  .calc-result {
+    background: var(--bg);
+    border: 1px solid var(--accent2);
+    border-radius: 6px;
+    padding: var(--sp2);
+    font-family: var(--font-mono); font-size: var(--fs-md);
+    color: var(--accent2);
+    text-align: center;
+    margin-top: var(--sp2);
+    display: none;
+  }
+  .calc-result.show { display: block; }
+  .calc-detail { font-size: var(--fs-sm); color: var(--text3); margin-top: var(--sp1); }
+
+  /* ===================== PROGRESS ===================== */
+  .progress-bar-wrap { background: var(--bg3); border-radius: 20px; height: 8px; overflow: hidden; margin: var(--sp1) 0; }
+  .progress-bar { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s; }
+  .progress-label { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); display: flex; justify-content: space-between; }
+
+  /* ===================== HOME PAGE ===================== */
+  .hero {
+    padding: var(--sp4) var(--sp2) var(--sp3);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .hero-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: var(--sp2);
+    display: block;
+  }
+  .hero h1 { margin-bottom: var(--sp1); }
+  .hero p { font-size: var(--fs-base); color: var(--text2); max-width: 500px; margin: 0 auto var(--sp2); }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: var(--sp1); justify-content: center; margin-top: var(--sp2); }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp1);
+    margin: var(--sp2) 0;
+  }
+  .stat-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--sp2) var(--sp1);
+    text-align: center;
+  }
+  .stat-n { font-family: var(--font-mono); font-size: var(--fs-lg); color: var(--accent); display: block; }
+  .stat-l { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text3); text-transform: uppercase; }
+
+  /* ===================== SCADA PAGE ===================== */
+  .scada-map {
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+    gap: 0;
+    position: relative;
+  }
+  .scada-row {
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--sp1) 0;
+    gap: var(--sp1);
+  }
+  .scada-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--sp1) var(--sp2);
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    text-align: center;
+    min-width: 100px;
+    color: var(--text2);
+  }
+  .scada-node.field { border-color: var(--accent2); color: var(--accent2); }
+  .scada-node.comms { border-color: var(--accent); color: var(--accent); }
+  .scada-node.ctrl { border-color: var(--accent5); color: var(--accent5); }
+  .scada-node.hmi { border-color: var(--accent3); color: var(--accent3); }
+  .scada-conn { font-family: var(--font-mono); color: var(--text3); font-size: var(--fs-base); }
+
+  /* ===================== SCENARIO ===================== */
+  .scenario {
+    background: var(--bg3);
+    border: 1px solid var(--accent5);
+    border-radius: 8px;
+    padding: var(--sp2);
+    margin: var(--sp2) 0;
+  }
+  .scenario-tag { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--accent5); margin-bottom: var(--sp1); text-transform: uppercase; letter-spacing: 1px; }
+  .scenario-title { font-family: var(--font-mono); font-size: var(--fs-base); color: var(--aaa-text); margin-bottom: var(--sp1); }
+  .scenario-body { font-size: var(--fs-base); color: var(--text2); }
+  .step-list { list-style: none; padding: 0; counter-reset: steps; margin: var(--sp1) 0; }
+  .step-list li {
+    counter-increment: steps;
+    padding: var(--sp1) 0 var(--sp1) var(--sp4);
+    position: relative;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before {
+    content: counter(steps);
+    position: absolute; left: 0;
+    width: var(--sp3); height: var(--sp3);
+    background: var(--accent5);
+    color: #fff; font-family: var(--font-mono); font-size: var(--fs-sm);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ===================== OFFLINE BANNER ===================== */
+  #offline-banner {
+    display: none;
+    background: rgba(255,170,0,0.15);
+    border-bottom: 1px solid var(--accent3);
+    padding: var(--sp1) var(--sp2);
+    text-align: center;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    color: var(--accent3);
+  }
+
+  /* ===================== INSTALL PROMPT ===================== */
+  #install-prompt {
+    display: none;
+    position: fixed; bottom: calc(var(--nav-h) + var(--sp2));
+    left: var(--sp2); right: var(--sp2);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: var(--sp2);
+    z-index: 150;
+    box-shadow: 0 4px 24px rgba(0,212,255,0.2);
+    display: none;
+  }
+  .install-row { display: flex; align-items: center; gap: var(--sp2); justify-content: space-between; flex-wrap: wrap; }
+  .install-text { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text); }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 480px) {
+    .module-grid { grid-template-columns: 1fr; }
+    .log-grid { grid-template-columns: 100px 60px 1fr 60px; }
+    .stat-row { grid-template-columns: repeat(3, 1fr); }
+    .flow-wrap { gap: 2px; }
+    .flow-node { min-width: 60px; font-size: 10px; padding: 4px 6px; }
+  }
+
+  /* ===================== TRANSITIONS ===================== */
+  .page-inner { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* ===================== SECTION HEADER ===================== */
+  .sec-head {
+    display: flex; align-items: center; gap: var(--sp1);
+    margin: var(--sp3) 0 var(--sp2);
+    padding-bottom: var(--sp1);
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-head-icon { font-size: var(--fs-md); }
+  .sec-head h2 { margin: 0; }
+
+  /* ===================== BADGE ===================== */
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+    background: var(--bg3);
+  }
+</style>
+</head>
+<body>
+
+<!-- Offline Banner -->
+<div id="offline-banner">⚡ Offline Mode — Cached content available</div>
+
+<!-- App Header -->
+<header id="app-header" role="banner">
+  <div class="header-title">
+    ⚡ <span>RE</span>Guide <span>// Engineering</span>
+  </div>
+  <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">☀</button>
+</header>
+
+<!-- Pages -->
+<main role="main">
+
+  <!-- HOME -->
+  <section id="page-home" class="page active" role="region" aria-label="Home">
+    <div class="hero">
+      <span class="hero-icon">⚡</span>
+      <h1>Renewable Energy<br>Engineering Guide</h1>
+      <p>Professional learning platform for engineers, students, and technical specialists. Solar · Wind · Hydro · Grid · SCADA.</p>
+      <div class="hero-tags">
+        <span class="mc-tag tag-solar">☀ Solar PV</span>
+        <span class="mc-tag tag-wind">🌬 Wind</span>
+        <span class="mc-tag tag-hydro">💧 Hydro</span>
+        <span class="mc-tag tag-power">⚡ Power Electronics</span>
+        <span class="mc-tag tag-scada">📡 SCADA</span>
+        <span class="mc-tag tag-grid">🔌 Grid</span>
+      </div>
+    </div>
+    <div class="page-inner">
+      <div class="stat-row">
+        <div class="stat-card"><span class="stat-n">12</span><span class="stat-l">Modules</span></div>
+        <div class="stat-card"><span class="stat-n">48</span><span class="stat-l">Sections</span></div>
+        <div class="stat-card"><span class="stat-n">30+</span><span class="stat-l">Quizzes</span></div>
+      </div>
+
+      <div class="sec-head"><span class="sec-head-icon">📚</span><h2>Learning Modules</h2></div>
+
+      <div class="module-grid" id="module-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="page-calc" class="page" role="region" aria-label="Calculators">
+    <div class="page-inner">
+      <div class="sec-head"><span class="sec-head-icon">🔢</span><h2>Engineering Calculators</h2></div>
+
+      <!-- PV Sizing -->
+      <div class="section-group">
+        <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+          <span class="toggle-label">☀ Solar PV Array Sizing</span>
+          <span class="toggle-icon">▾</span>
+        </button>
+        <div class="section-body">
+          <p class="content-para">Calculate the number of PV panels and inverter capacity for a given load. Accounts for panel efficiency, PSH, and system losses.</p>
+          <div class="form-group">
+            <label class="form-label" for="pv-load">Daily Energy Load (kWh/day)</label>
+            <input class="form-input" type="number" id="pv-load" placeholder="e.g. 50" min="0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pv-psh">Peak Sun Hours (PSH/day)</label>
+            <input class="form-input" type="number" id="pv-psh" placeholder="e.g. 5.5" min="0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pv-eff">System Efficiency (%)</label>
+            <input class="form-input" type="number" id="pv-eff" value="80" min="50" max="99" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pv-panel">Single Panel Wattage (Wp)</label>
+            <div class="select-wrap">
+              <select class="form-select" id="pv-panel">
+                <option value="300">300 Wp</option>
+                <option value="400" selected>400 Wp</option>
+                <option value="500">500 Wp</option>
+                <option value="550">550 Wp</option>
+                <option value="600">600 Wp</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-sm btn-primary" style="min-height:44px;width:100%" onclick="calcPV()">Calculate PV System</button>
+          <div class="calc-result" id="pv-result"></div>
+        </div>
+      </div>
+
+      <!-- Wind Power -->
+      <div class="section-group">
+        <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+          <span class="toggle-label">🌬 Wind Turbine Power Output</span>
+          <span class="toggle-icon">▾</span>
+        </button>
+        <div class="section-body">
+          <p class="content-para">Estimate theoretical wind power using the Betz law equation: P = 0.5 × ρ × A × v³ × Cp</p>
+          <div class="form-group">
+            <label class="form-label" for="w-dia">Rotor Diameter (m)</label>
+            <input class="form-input" type="number" id="w-dia" placeholder="e.g. 80" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="w-vel">Wind Velocity (m/s)</label>
+            <input class="form-input" type="number" id="w-vel" placeholder="e.g. 9" min="0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="w-cp">Power Coefficient Cp</label>
+            <div class="select-wrap">
+              <select class="form-select" id="w-cp">
+                <option value="0.35">0.35 — Older HAWT</option>
+                <option value="0.40">0.40 — Typical HAWT</option>
+                <option value="0.45" selected>0.45 — Modern HAWT</option>
+                <option value="0.50">0.50 — Best-class</option>
+                <option value="0.593">0.593 — Betz limit (theoretical)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="w-alt">Site Altitude (m) for air density</label>
+            <input class="form-input" type="number" id="w-alt" value="0" min="0" step="50">
+          </div>
+          <button class="btn-sm btn-primary" style="min-height:44px;width:100%" onclick="calcWind()">Calculate Wind Power</button>
+          <div class="calc-result" id="w-result"></div>
+        </div>
+      </div>
+
+      <!-- Transformer -->
+      <div class="section-group">
+        <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+          <span class="toggle-label">🔌 Transformer Turns Ratio & Impedance</span>
+          <span class="toggle-icon">▾</span>
+        </button>
+        <div class="section-body">
+          <p class="content-para">Calculate turns ratio, secondary current, and referred impedance for power transformer design.</p>
+          <div class="form-group">
+            <label class="form-label" for="t-v1">Primary Voltage V₁ (V)</label>
+            <input class="form-input" type="number" id="t-v1" placeholder="e.g. 11000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="t-v2">Secondary Voltage V₂ (V)</label>
+            <input class="form-input" type="number" id="t-v2" placeholder="e.g. 400">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="t-kva">Apparent Power (kVA)</label>
+            <input class="form-input" type="number" id="t-kva" placeholder="e.g. 500">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="t-z">Leakage Impedance Zp (Ω) — Primary side</label>
+            <input class="form-input" type="number" id="t-z" placeholder="e.g. 10" step="0.1">
+          </div>
+          <button class="btn-sm btn-primary" style="min-height:44px;width:100%" onclick="calcTransformer()">Calculate</button>
+          <div class="calc-result" id="t-result"></div>
+        </div>
+      </div>
+
+      <!-- SCADA Polling -->
+      <div class="section-group">
+        <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+          <span class="toggle-label">📡 Modbus RTU Poll Cycle Estimator</span>
+          <span class="toggle-icon">▾</span>
+        </button>
+        <div class="section-body">
+          <p class="content-para">Estimate Modbus RTU polling cycle time based on baud rate, registers, and number of slaves.</p>
+          <div class="form-group">
+            <label class="form-label" for="mb-baud">Baud Rate</label>
+            <div class="select-wrap">
+              <select class="form-select" id="mb-baud">
+                <option value="9600">9600 bps</option>
+                <option value="19200">19200 bps</option>
+                <option value="38400">38400 bps</option>
+                <option value="57600">57600 bps</option>
+                <option value="115200" selected>115200 bps</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mb-regs">Registers per Slave (16-bit each)</label>
+            <input class="form-input" type="number" id="mb-regs" value="50" min="1" max="125">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mb-slaves">Number of Slave Devices</label>
+            <input class="form-input" type="number" id="mb-slaves" value="10" min="1" max="247">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mb-turn">Turnaround Delay per Slave (ms)</label>
+            <input class="form-input" type="number" id="mb-turn" value="5" min="1" step="1">
+          </div>
+          <button class="btn-sm btn-primary" style="min-height:44px;width:100%" onclick="calcModbus()">Estimate Poll Cycle</button>
+          <div class="calc-result" id="mb-result"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOG SIM -->
+  <section id="page-log" class="page" role="region" aria-label="Log Simulation">
+    <div class="page-inner">
+      <div class="sec-head"><span class="sec-head-icon">📊</span><h2>SCADA Log Simulation</h2></div>
+      <p class="content-para">Simulates real-time data acquisition log entries from a PV+Wind hybrid site. Demonstrates how SCADA systems record measurement, alarm, and status events from field RTUs.</p>
+      <div class="log-controls">
+        <button class="btn-sm btn-primary" id="log-start-btn" onclick="startLog()">▶ Start Simulation</button>
+        <button class="btn-sm" onclick="stopLog()">⏹ Stop</button>
+        <button class="btn-sm" onclick="clearLog()">🗑 Clear</button>
+        <div class="select-wrap" style="display:inline-block;min-width:130px">
+          <select class="form-select" id="log-speed" style="height:36px;min-height:36px;padding:0 32px 0 8px">
+            <option value="2000">Slow (2s)</option>
+            <option value="1000" selected>Normal (1s)</option>
+            <option value="500">Fast (0.5s)</option>
+          </select>
+        </div>
+        <div class="select-wrap" style="display:inline-block;min-width:130px">
+          <select class="form-select" id="log-filter" style="height:36px;min-height:36px;padding:0 32px 0 8px" onchange="filterLog()">
+            <option value="all">All Levels</option>
+            <option value="INFO">INFO only</option>
+            <option value="WARN">WARN only</option>
+            <option value="ERROR">ERROR only</option>
+            <option value="OK">OK only</option>
+          </select>
+        </div>
+      </div>
+      <div class="log-grid" id="log-grid">
+        <div class="log-header">Timestamp</div>
+        <div class="log-header">Level</div>
+        <div class="log-header">Message</div>
+        <div class="log-header">Value</div>
+        <!-- Rows populated by JS -->
+      </div>
+      <div style="margin-top:var(--sp1)" class="caption">Rows: <span id="log-count">0</span> | Errors: <span id="log-errs">0</span> | Warnings: <span id="log-warns">0</span></div>
+    </div>
+  </section>
+
+  <!-- SCADA MAP -->
+  <section id="page-scada" class="page" role="region" aria-label="SCADA Architecture">
+    <div class="page-inner">
+      <div class="sec-head"><span class="sec-head-icon">📡</span><h2>SCADA System Architecture</h2></div>
+      <p class="content-para">Full SCADA communication chain from field sensors through RTU/PLC, communications network, to the control room HMI. Covers Modbus RTU/TCP, IEC 61850 GOOSE, and DNP3 protocol layers.</p>
+
+      <div class="diagram" style="overflow:visible">
+        <div class="diagram-title">Data Flow: Field Device → RTU → SCADA → HMI</div>
+        <div class="scada-map">
+          <div class="scada-row">
+            <div class="scada-node field">PV Inverter<br><span style="font-size:10px">Modbus RTU Slave</span></div>
+            <div class="scada-node field">Wind SCADA<br><span style="font-size:10px">IEC 61400-25</span></div>
+            <div class="scada-node field">Power Meter<br><span style="font-size:10px">Modbus/DNP3</span></div>
+            <div class="scada-node field">Protection Relay<br><span style="font-size:10px">IEC 61850</span></div>
+          </div>
+          <div class="scada-row"><div class="scada-conn">↕ RS-485 / Fiber / Ethernet</div></div>
+          <div class="scada-row">
+            <div class="scada-node comms" style="min-width:300px;width:80%;max-width:500px">
+              Field RTU / Data Concentrator<br>
+              <span style="font-size:10px">Protocol Conversion · Buffering · Local Control Logic</span>
+            </div>
+          </div>
+          <div class="scada-row"><div class="scada-conn">↕ Ethernet / Fiber LAN / 4G/LTE</div></div>
+          <div class="scada-row">
+            <div class="scada-node ctrl" style="min-width:200px">
+              SCADA Server<br><span style="font-size:10px">DNP3/IEC60870 Master · Historian · Alarm Engine</span>
+            </div>
+          </div>
+          <div class="scada-row"><div class="scada-conn">↕ LAN / VPN</div></div>
+          <div class="scada-row">
+            <div class="scada-node hmi">Engineering<br>Workstation</div>
+            <div class="scada-node hmi">Operator HMI<br>Displays</div>
+            <div class="scada-node hmi">DERMS / EMS<br>Integration</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:var(--sp3)"><h2>Protocol Reference</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Protocol</th><th>Layer</th><th>Use Case</th><th>Speed</th><th>Medium</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">Modbus RTU</td><td>Serial</td><td>Inverter/meter polling</td><td>9.6k–115.2k bps</td><td>RS-485</td></tr>
+            <tr><td class="mono">Modbus TCP</td><td>TCP/IP</td><td>LAN device integration</td><td>10/100 Mbps</td><td>Ethernet</td></tr>
+            <tr><td class="mono">DNP3</td><td>Serial/TCP</td><td>Substation/utility RTU</td><td>1200–115k bps</td><td>RS-232/Eth</td></tr>
+            <tr><td class="mono">IEC 61850 GOOSE</td><td>Ethernet L2</td><td>Protection relay tripping</td><td>&lt;4 ms</td><td>Fiber/Cu LAN</td></tr>
+            <tr><td class="mono">IEC 60870-5-104</td><td>TCP/IP</td><td>SCADA telecontrol</td><td>Ethernet</td><td>WAN/LAN</td></tr>
+            <tr><td class="mono">IEC 61400-25</td><td>Any</td><td>Wind turbine comms</td><td>Variable</td><td>Any</td></tr>
+            <tr><td class="mono">OPC-UA</td><td>TCP/IP</td><td>EMS/DCS integration</td><td>10+ Mbps</td><td>Ethernet</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sec-head"><h2>Modbus Register Map — Inverter</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Register (FC03)</th><th>Parameter</th><th>Unit</th><th>Scale</th><th>R/W</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">40001</td><td>DC Input Voltage</td><td>V</td><td>×0.1</td><td>R</td></tr>
+            <tr><td class="mono">40002</td><td>DC Input Current</td><td>A</td><td>×0.01</td><td>R</td></tr>
+            <tr><td class="mono">40003</td><td>DC Power</td><td>W</td><td>×1</td><td>R</td></tr>
+            <tr><td class="mono">40010</td><td>AC Output Voltage (L-N)</td><td>V</td><td>×0.1</td><td>R</td></tr>
+            <tr><td class="mono">40011</td><td>AC Output Current</td><td>A</td><td>×0.01</td><td>R</td></tr>
+            <tr><td class="mono">40012</td><td>AC Frequency</td><td>Hz</td><td>×0.01</td><td>R</td></tr>
+            <tr><td class="mono">40013</td><td>Active Power Output</td><td>W</td><td>×1</td><td>R</td></tr>
+            <tr><td class="mono">40014</td><td>Reactive Power</td><td>VAr</td><td>×1</td><td>R</td></tr>
+            <tr><td class="mono">40015</td><td>Power Factor</td><td>—</td><td>×0.001</td><td>R</td></tr>
+            <tr><td class="mono">40020</td><td>Fault Code</td><td>—</td><td>bitfield</td><td>R</td></tr>
+            <tr><td class="mono">40030</td><td>Daily Energy (kWh)</td><td>kWh</td><td>×0.1</td><td>R</td></tr>
+            <tr><td class="mono">40100</td><td>Power Setpoint</td><td>%</td><td>×1</td><td>R/W</td></tr>
+            <tr><td class="mono">40101</td><td>Q Setpoint (VAr)</td><td>VAr</td><td>×1</td><td>R/W</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sec-head"><h2>Alarm & Event Handling Logic</h2></div>
+      <div class="diagram">
+        <div class="diagram-title">Alarm State Machine</div>
+        <div class="flow-wrap">
+          <div class="flow-node">Normal</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node warn">Pre-Alarm<br><span style="font-size:9px">threshold ±5%</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node danger">ALARM<br><span style="font-size:9px">threshold exceeded</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">Ack'd<br><span style="font-size:9px">operator</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node success">Cleared</div>
+        </div>
+        <div style="margin-top:var(--sp2); color: var(--text3); font-family: var(--font-mono); font-size: var(--fs-sm)">
+          Unacknowledged alarms escalate → email/SMS after configurable timeout (e.g. 15 min). Latched alarms require condition clear + operator ack before returning to Normal.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Lesson View Overlay -->
+<div id="lesson-view" role="dialog" aria-modal="true" aria-label="Lesson content">
+  <div class="lesson-header">
+    <button class="btn-back" onclick="closeLesson()" aria-label="Back to modules">←</button>
+    <div>
+      <div class="lesson-title" id="lesson-title"></div>
+      <div class="caption" id="lesson-subtitle"></div>
+    </div>
+  </div>
+  <div class="lesson-content" id="lesson-content"></div>
+</div>
+
+<!-- Bottom Nav -->
+<nav id="bottom-nav" role="navigation" aria-label="Main navigation">
+  <button class="nav-item active" data-page="home" onclick="showPage('home',this)">
+    <div class="nav-icon">🏠</div>
+    <span class="nav-label">Modules</span>
+  </button>
+  <button class="nav-item" data-page="calc" onclick="showPage('calc',this)">
+    <div class="nav-icon">🔢</div>
+    <span class="nav-label">Calc</span>
+  </button>
+  <button class="nav-item" data-page="log" onclick="showPage('log',this)">
+    <div class="nav-icon">📊</div>
+    <span class="nav-label">Log</span>
+  </button>
+  <button class="nav-item" data-page="scada" onclick="showPage('scada',this)">
+    <div class="nav-icon">📡</div>
+    <span class="nav-label">SCADA</span>
+  </button>
+</nav>
+
+<!-- Install Prompt -->
+<div id="install-prompt">
+  <div class="install-row">
+    <div class="install-text">📲 Install RE Guide as an app for offline access</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm btn-primary" id="install-btn" style="min-height:36px">Install</button>
+      <button class="btn-sm" onclick="document.getElementById('install-prompt').style.display='none'" style="min-height:36px">✕</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== MODULE DATA =====================
+const MODULES = [
+  {
+    id: 'fundamentals',
+    num: '01',
+    title: 'Fundamentals of Renewable Energy',
+    desc: 'Energy conversion principles, power quality fundamentals, grid basics, and system boundary definitions.',
+    tag: 'tag-grid',
+    tagLabel: '🔌 Grid',
+    lessons: [
+      { id: 'energy-basics', title: 'Energy Conversion Principles', subtitle: 'Thermodynamics, electrical conversion, efficiency chains' },
+      { id: 'power-quality', title: 'Power Quality & Grid Basics', subtitle: 'Voltage, frequency, harmonics, THD, PF' },
+      { id: 'system-boundaries', title: 'System Boundary Definitions', subtitle: 'POI, PCC, grid codes, interconnection' }
+    ]
+  },
+  {
+    id: 'solar',
+    num: '02',
+    title: 'Solar PV Systems Architecture',
+    desc: 'PV cell physics, array design, string sizing, combiner boxes, DC protection, and inverter selection.',
+    tag: 'tag-solar',
+    tagLabel: '☀ Solar',
+    lessons: [
+      { id: 'pv-physics', title: 'PV Cell & Module Physics', subtitle: 'p-n junction, I-V curve, MPP, fill factor' },
+      { id: 'array-design', title: 'PV Array Design & String Sizing', subtitle: 'Voc, Vmp, Isc, series/parallel configuration' },
+      { id: 'dc-protection', title: 'DC Side Protection Systems', subtitle: 'String fuses, DC MCCBs, combiner boxes, surge protection' },
+      { id: 'inverter-types', title: 'Inverter Topology & Selection', subtitle: 'String, central, micro, hybrid — topology trade-offs' }
+    ]
+  },
+  {
+    id: 'wind',
+    num: '03',
+    title: 'Wind Energy Systems',
+    desc: 'Turbine aerodynamics, generator types (DFIG, PMSG), power curves, pitch control, and wind farm layout.',
+    tag: 'tag-wind',
+    tagLabel: '🌬 Wind',
+    lessons: [
+      { id: 'wind-aero', title: 'Turbine Aerodynamics & Betz Limit', subtitle: 'Rotor physics, tip speed ratio, Cp curves' },
+      { id: 'wind-generators', title: 'Generator Types: DFIG vs PMSG', subtitle: 'Doubly-fed induction, permanent magnet, converter configs' },
+      { id: 'wind-control', title: 'Pitch & Torque Control Logic', subtitle: 'Rated power region, below/above rated, yaw control' },
+      { id: 'wind-farm', title: 'Wind Farm Layout & Wake Effects', subtitle: 'Array efficiency, turbine spacing, terrain effects' }
+    ]
+  },
+  {
+    id: 'hydro',
+    num: '04',
+    title: 'Hydropower Systems',
+    desc: 'Hydraulic turbine types, governors, synchronous generators, penstock design, and protection systems.',
+    tag: 'tag-hydro',
+    tagLabel: '💧 Hydro',
+    lessons: [
+      { id: 'hydro-turbines', title: 'Hydraulic Turbine Types', subtitle: 'Pelton, Francis, Kaplan — head vs flow selection' },
+      { id: 'hydro-governor', title: 'Governor & Speed Control', subtitle: 'Droop control, PID tuning, load following' },
+      { id: 'hydro-protection', title: 'Hydro Unit Protection', subtitle: 'Over/under speed, bearing temp, vibration, earth fault' }
+    ]
+  },
+  {
+    id: 'power-electronics',
+    num: '05',
+    title: 'Power Electronics: Inverters & MPPT',
+    desc: 'Inverter topologies, switching devices, MPPT algorithms, THD, reactive power control, and grid-tie operation.',
+    tag: 'tag-power',
+    tagLabel: '⚡ Power',
+    lessons: [
+      { id: 'inverter-topo', title: 'Inverter Topologies & PWM', subtitle: 'VSI, CSI, H-bridge, SPWM, SVPWM, switching losses' },
+      { id: 'mppt', title: 'MPPT Algorithms', subtitle: 'P&O, Incremental Conductance, Hill Climbing, Fractional Voc' },
+      { id: 'reactive-power', title: 'Reactive Power & Power Factor Control', subtitle: 'Q injection, PF correction, voltage support' },
+      { id: 'harmonics', title: 'Harmonics, THD & IEEE 519', subtitle: 'Harmonic orders, LCL filter design, grid code compliance' }
+    ]
+  },
+  {
+    id: 'transformers',
+    num: '06',
+    title: 'Transformers & Substation Integration',
+    desc: 'Transformer types, vector groups, protection relays, bus configurations, and substation single-line diagrams.',
+    tag: 'tag-grid',
+    tagLabel: '🔌 Grid',
+    lessons: [
+      { id: 'transformer-basics', title: 'Transformer Fundamentals', subtitle: 'Turns ratio, equivalent circuit, losses, cooling' },
+      { id: 'vector-groups', title: 'Vector Groups & Phase Displacement', subtitle: 'Dyn11, YNd1, ZNyn11 — winding arrangements' },
+      { id: 'transformer-protection', title: 'Transformer Protection Schemes', subtitle: 'Differential, Buchholz, OC/EF, restricted earth fault' },
+      { id: 'substation', title: 'Substation Single-Line Diagrams', subtitle: 'Bus configurations, switchgear, CT/VT placement' }
+    ]
+  },
+  {
+    id: 'grid-sync',
+    num: '07',
+    title: 'Grid Synchronization & Protection',
+    desc: 'Synchronization conditions, PLL implementation, grid code requirements, anti-islanding, and protection relay settings.',
+    tag: 'tag-grid',
+    tagLabel: '🔌 Grid',
+    lessons: [
+      { id: 'sync-conditions', title: 'Synchronization Conditions', subtitle: 'Voltage magnitude, frequency, phase angle, sequence' },
+      { id: 'pll', title: 'Phase-Locked Loop (PLL) Theory', subtitle: 'dq-frame PLL, αβ-PLL, adaptive frequency tracking' },
+      { id: 'grid-protection', title: 'Grid Protection: OV/UV/OF/UF/RoCoF', subtitle: 'IEEE 1547 / AS4777 settings, trip logic' },
+      { id: 'anti-islanding', title: 'Anti-Islanding Detection', subtitle: 'Passive (ROCOF/VV), active (SMS, AFD), NDZ' }
+    ]
+  },
+  {
+    id: 'scada-integration',
+    num: '08',
+    title: 'SCADA Integration',
+    desc: 'End-to-end SCADA architecture from field device to control room: RTU config, protocol mapping, and data flow.',
+    tag: 'tag-scada',
+    tagLabel: '📡 SCADA',
+    lessons: [
+      { id: 'scada-arch', title: 'SCADA Architecture Overview', subtitle: 'Field layer, control layer, supervisory layer, EMS/DMS' },
+      { id: 'modbus-deep', title: 'Modbus Protocol Deep Dive', subtitle: 'RTU/TCP framing, function codes, CRC, exception codes' },
+      { id: 'iec61850', title: 'IEC 61850 Concepts', subtitle: 'Logical nodes, data objects, GOOSE, SAMPLED VALUES' },
+      { id: 'rtu-config', title: 'RTU Configuration & Mapping', subtitle: 'Point list, scaling, polling, data concentrator setup' }
+    ]
+  },
+  {
+    id: 'monitoring',
+    num: '09',
+    title: 'Monitoring & Data Logging',
+    desc: 'Performance monitoring KPIs, data historian setup, energy metering, PR and CUF calculation.',
+    tag: 'tag-scada',
+    tagLabel: '📡 SCADA',
+    lessons: [
+      { id: 'kpis', title: 'Plant KPIs: PR, CUF, Availability', subtitle: 'Performance Ratio, Capacity Utilization Factor formulas' },
+      { id: 'historian', title: 'Data Historian Architecture', subtitle: 'OSIsoft PI, InfluxDB — tag naming, compression, retrieval' },
+      { id: 'metering', title: 'Revenue & Check Metering', subtitle: 'MID-class meters, CT accuracy, meter reading protocols' }
+    ]
+  },
+  {
+    id: 'fault-handling',
+    num: '10',
+    title: 'Fault Handling & Protection Logic',
+    desc: 'Fault types, protection relay coordination, arc flash, fault current calculation, and protection grading.',
+    tag: 'tag-grid',
+    tagLabel: '🔌 Grid',
+    lessons: [
+      { id: 'fault-types', title: 'Fault Types & Symmetrical Components', subtitle: '3-phase, L-L, L-G, L-L-G — sequence network analysis' },
+      { id: 'relay-coord', title: 'Protection Relay Coordination', subtitle: 'IDMT curves, time-current grading, primary/backup' },
+      { id: 'arc-flash', title: 'Arc Flash Hazard Analysis', subtitle: 'IEEE 1584 method, incident energy, PPE selection' }
+    ]
+  },
+  {
+    id: 'case-studies',
+    num: '11',
+    title: 'Case Study: 5 MW Solar + 2 MW Wind Hybrid',
+    desc: 'Complete architecture walk-through of a grid-connected hybrid renewable plant with BESS and SCADA.',
+    tag: 'tag-power',
+    tagLabel: '⚡ System',
+    lessons: [
+      { id: 'cs-overview', title: 'Plant Overview & Single-Line', subtitle: 'Equipment list, grid connection, POI specifications' },
+      { id: 'cs-control', title: 'Plant Control Strategy', subtitle: 'Dispatch, curtailment, ramp rate, AGC interface' },
+      { id: 'cs-scada', title: 'SCADA System Implementation', subtitle: 'Tag list, RTU config, historian, alarm set points' }
+    ]
+  },
+  {
+    id: 'checklists',
+    num: '12',
+    title: 'Practical Engineering Checklists',
+    desc: 'Commissioning checklists for PV, wind, and SCADA systems. Ready-to-use field verification checklists.',
+    tag: 'tag-grid',
+    tagLabel: '✓ Checklist',
+    lessons: [
+      { id: 'cl-pv', title: 'Solar PV Commissioning Checklist', subtitle: 'DC side, inverter, AC side, protection verification' },
+      { id: 'cl-wind', title: 'Wind Turbine Commissioning Checklist', subtitle: 'Mechanical, electrical, control, protection' },
+      { id: 'cl-scada', title: 'SCADA FAT/SAT Checklist', subtitle: 'Point-by-point verification, comms, alarm logic' }
+    ]
+  }
+];
+
+// ===================== LESSON CONTENT =====================
+const LESSON_CONTENT = {
+  'pv-physics': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. The p-n Junction and Photovoltaic Effect</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">A solar cell is fundamentally a large-area p-n junction diode. When photons with energy greater than the semiconductor bandgap (1.12 eV for silicon) strike the cell, they excite electrons from the valence band to the conduction band, creating electron-hole pairs. The built-in electric field at the junction separates these carriers before recombination, driving current through an external circuit.</p>
+        <div class="info-box">
+          <h3>Bandgap Energy</h3>
+          <p>Silicon Eg = 1.12 eV. Only photons with λ &lt; 1100 nm can generate carriers. Photons with E > Eg lose excess energy as heat (thermalization). This limits theoretical single-junction efficiency to ~33% (Shockley-Queisser limit).</p>
+        </div>
+        <p class="content-para"><strong>Open Circuit Voltage (Voc)</strong> — the maximum voltage when no current flows. Voc depends logarithmically on irradiance: higher irradiance → higher Voc. Typical monocrystalline silicon cell: Voc ≈ 0.6–0.65 V.</p>
+        <p class="content-para"><strong>Short Circuit Current (Isc)</strong> — the maximum current when terminals are short-circuited. Isc is directly proportional to irradiance. At 1000 W/m², a 6" cell delivers ~9–10 A.</p>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. I-V Curve & Maximum Power Point</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">The I-V curve describes cell current as a function of terminal voltage. Key regions:</p>
+        <div class="diagram">
+          <div class="diagram-title">I-V Curve Regions</div>
+          <div class="diagram-grid">
+            <div class="d-block d-green">Current Source Region<br><span style="font-size:9px">V near 0, I ≈ Isc</span></div>
+            <div class="d-block d-accent">MPP Region<br><span style="font-size:9px">Vmp × Imp = Pmax</span></div>
+            <div class="d-block d-yellow">Voltage Source Region<br><span style="font-size:9px">V near Voc, I drops</span></div>
+          </div>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Maximum Power Point</div>
+          P_max = Vmp × Imp = FF × Voc × Isc
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Fill Factor (FF)</div>
+          FF = (Vmp × Imp) / (Voc × Isc) — typically 0.70–0.82 for silicon
+        </div>
+        <p class="content-para">Temperature effects: Voc decreases ~-0.35%/°C, Isc increases ~+0.06%/°C. Net effect: module power decreases ~-0.3 to -0.4%/°C above STC (25°C). This is critical for string sizing in hot climates.</p>
+        <div class="warn-box">
+          <h3>⚠ Hot Climate Derating</h3>
+          <p>At 70°C cell temperature: ΔT = 45°C above STC. Power loss ≈ 45 × 0.4% = 18% below nameplate. Account for this in energy yield calculations and inverter sizing (never undersize the inverter DC input).</p>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">3. Quiz: PV Cell Physics</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <div class="quiz-section">
+          <div class="quiz-q"><span class="quiz-num">Q1.</span> What is the approximate Shockley-Queisser efficiency limit for a single-junction silicon solar cell?</div>
+          <div class="quiz-options" data-answer="1">
+            <button class="quiz-opt" onclick="answerQuiz(this,0,'1')"><span class="opt-letter">A</span> ~50%</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,1,'1')"><span class="opt-letter">B</span> ~33%</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,2,'1')"><span class="opt-letter">C</span> ~22%</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,3,'1')"><span class="opt-letter">D</span> ~15%</button>
+          </div>
+          <div class="quiz-feedback" id="q1-fb">Correct. The Shockley-Queisser limit (~33%) accounts for thermalization and transmission losses in a single p-n junction.</div>
+        </div>
+        <div class="quiz-section">
+          <div class="quiz-q"><span class="quiz-num">Q2.</span> A PV module at STC has Voc=45V, Isc=9A, Vmp=37V, Imp=8.5A. What is the Fill Factor?</div>
+          <div class="quiz-options" data-answer="2">
+            <button class="quiz-opt" onclick="answerQuiz(this,0,'2')"><span class="opt-letter">A</span> 0.93</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,1,'2')"><span class="opt-letter">B</span> 0.82</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,2,'2')"><span class="opt-letter">C</span> 0.776</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,3,'2')"><span class="opt-letter">D</span> 0.71</button>
+          </div>
+          <div class="quiz-feedback" id="q2-fb">Correct. FF = (37 × 8.5) / (45 × 9) = 314.5 / 405 = 0.776. This is a typical commercial module.</div>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'array-design': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. String Sizing Constraints</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">String sizing must satisfy two constraints simultaneously: the <strong>minimum string voltage</strong> must exceed the inverter's minimum MPPT voltage at maximum operating temperature, and the <strong>maximum string voltage</strong> must not exceed the inverter's absolute maximum DC input voltage at the coldest expected temperature.</p>
+        <div class="warn-box">
+          <h3>⚠ Voltage at Minimum Temperature</h3>
+          <p>Voc increases as temperature falls. At -10°C, Voc can be 12–15% above STC value. This is when the maximum string voltage limit can be violated. Always calculate worst-case Voc at the coldest historical site temperature.</p>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Maximum String Voltage (cold correction)</div>
+          Vstring_max = N × Voc_STC × [1 + γVoc × (Tmin - 25)]
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Minimum MPPT Voltage (hot correction)</div>
+          Vstring_min = N × Vmp_STC × [1 + γVmp × (Tmax_cell - 25)]
+        </div>
+        <p class="content-para">Where γVoc ≈ -0.0035/°C (negative, Voc increases with cooling) and Tmax_cell is the maximum cell temperature (ambient + NOCT offset). N is the number of panels in series.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Typical Value</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td>γVoc</td><td>-0.30 to -0.36%/°C</td><td>Voc rises at low temp</td></tr>
+              <tr><td>γVmp</td><td>-0.35 to -0.45%/°C</td><td>Vmp falls at high temp</td></tr>
+              <tr><td>γIsc</td><td>+0.04 to +0.06%/°C</td><td>Slight Isc rise at high temp</td></tr>
+              <tr><td>γPmax</td><td>-0.30 to -0.45%/°C</td><td>Net power reduction</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Parallel Strings & DC Wiring Design</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">Multiple strings are connected in parallel at the combiner box (also called string combiner or DC junction box). Each string feeds through a string fuse to a common DC bus. The combiner box also houses string monitoring inputs (optional), surge protection devices (SPDs), and may include string-level disconnect switches.</p>
+        <div class="diagram">
+          <div class="diagram-title">DC Architecture: Modules → String → Combiner → Inverter</div>
+          <div class="vertical-flow">
+            <div class="d-block d-yellow" style="width:80%">PV Module × N (Series String)</div>
+            <div class="v-arrow">↓ DC cable, String+/−</div>
+            <div class="d-block d-yellow" style="width:80%">String Fuse (per string positive)</div>
+            <div class="v-arrow">↓ Parallel at combiner</div>
+            <div class="d-block d-accent" style="width:80%">DC Combiner Box: SPD · Disconnect · Monitoring</div>
+            <div class="v-arrow">↓ DC main cable</div>
+            <div class="d-block d-green" style="width:80%">Inverter DC Input (MPPT Input)</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <h3>String Fuse Sizing Rule</h3>
+          <p>Fuse rating = 1.5 × Isc per IEC 60364-7-712. For a module with Isc = 9 A, minimum fuse = 13.5 A → use 15 A. Maximum fuse = Imax_reverse_current of the module (typically 20–25 A). Never exceed this value.</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'mppt': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Why MPPT is Needed</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">The I-V characteristic of a PV array shifts continuously with irradiance and temperature. Without active control, a fixed operating voltage will miss the MPP as conditions change, leaving up to 20–30% of available power uncaptured. MPPT algorithms continuously adjust the inverter's input impedance to maintain operation at the maximum power point.</p>
+        <div class="info-box">
+          <h3>Perturbation & Observe (P&O) Algorithm</h3>
+          <p>The most widely implemented MPPT method. The controller periodically perturbs (increases or decreases) the operating voltage by a small step ΔV, then measures the resulting change in power ΔP. If ΔP > 0 (power increased), continue in the same direction. If ΔP &lt; 0, reverse direction.</p>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">P&O Decision Logic</div>
+          if dP/dV > 0 → V_ref = V_ref + ΔV (move right toward MPP)
+          if dP/dV < 0 → V_ref = V_ref − ΔV (move left toward MPP)
+          if dP/dV = 0 → At MPP (steady state oscillation ±ΔV)
+        </div>
+        <div class="warn-box">
+          <h3>⚠ P&O Limitation: Rapidly Changing Irradiance</h3>
+          <p>Under fast irradiance changes (e.g. cloud edge transients), P&O can track in the wrong direction because ΔP includes both the algorithm perturbation effect AND the irradiance-induced change. Variable-step methods and IC algorithms handle this better.</p>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Incremental Conductance (INC) Algorithm</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">IC exploits the mathematical condition at MPP: dP/dV = 0 → I + V·dI/dV = 0 → dI/dV = -I/V. The algorithm computes the instantaneous conductance (I/V) and the incremental conductance (ΔI/ΔV) and compares them.</p>
+        <div class="formula-box">
+          <div class="formula-label">Incremental Conductance MPP Condition</div>
+          At MPP: ΔI/ΔV = −I/V
+          Left of MPP: ΔI/ΔV > −I/V → increase V
+          Right of MPP: ΔI/ΔV < −I/V → decrease V
+        </div>
+        <p class="content-para">IC has better performance under partial shading and fast-changing conditions compared to P&O. It produces less steady-state oscillation because it can stop exactly at MPP rather than oscillating around it.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Convergence</th><th>Complexity</th><th>Partial Shade</th><th>Fast Transient</th></tr></thead>
+            <tbody>
+              <tr><td>P&O</td><td>Fast</td><td>Low</td><td>Poor</td><td>Can mistrack</td></tr>
+              <tr><td>INC</td><td>Medium</td><td>Medium</td><td>Moderate</td><td>Good</td></tr>
+              <tr><td>Fractional Voc</td><td>Very fast</td><td>Very low</td><td>Poor</td><td>Good</td></tr>
+              <tr><td>PSO / GA</td><td>Slow</td><td>High</td><td>Excellent</td><td>Poor</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">3. MPPT Quiz</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <div class="quiz-section">
+          <div class="quiz-q"><span class="quiz-num">Q1.</span> In the P&O MPPT algorithm, if the operating voltage is increased and power output decreases (ΔP < 0), what does the controller do next?</div>
+          <div class="quiz-options" data-answer="1">
+            <button class="quiz-opt" onclick="answerQuiz(this,0,'mppt1')"><span class="opt-letter">A</span> Continue increasing voltage</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,1,'mppt1')"><span class="opt-letter">B</span> Decrease voltage (reverse direction)</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,2,'mppt1')"><span class="opt-letter">C</span> Hold current voltage</button>
+            <button class="quiz-opt" onclick="answerQuiz(this,3,'mppt1')"><span class="opt-letter">D</span> Shut down the inverter</button>
+          </div>
+          <div class="quiz-feedback" id="mppt1-fb">Correct. ΔP/ΔV &lt; 0 means we moved past the MPP — reverse direction.</div>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'modbus-deep': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Modbus RTU Frame Structure</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">Modbus RTU is a serial protocol operating on RS-485 (or RS-232 for point-to-point). Each frame consists of: <strong>Slave Address</strong> (1 byte), <strong>Function Code</strong> (1 byte), <strong>Data</strong> (N bytes), and <strong>CRC</strong> (2 bytes, little-endian). Frames are delimited by silent intervals ≥ 3.5 character times (t3.5).</p>
+        <div class="diagram">
+          <div class="diagram-title">Modbus RTU Frame (Read Holding Registers — FC03)</div>
+          <div class="flow-wrap" style="flex-wrap:nowrap;overflow-x:auto">
+            <div class="flow-node highlight">Addr<br><span style="font-size:9px">1 byte<br>0x01–0xF7</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node warn">FC<br><span style="font-size:9px">1 byte<br>0x03</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node">Start Reg Hi<br><span style="font-size:9px">1 byte</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node">Start Reg Lo<br><span style="font-size:9px">1 byte</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node">Qty Hi<br><span style="font-size:9px">1 byte</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node">Qty Lo<br><span style="font-size:9px">1 byte</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node success">CRC Lo<br><span style="font-size:9px">1 byte</span></div>
+            <div class="flow-arrow">|</div>
+            <div class="flow-node success">CRC Hi<br><span style="font-size:9px">1 byte</span></div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Function Code</th><th>Name</th><th>Max Registers</th><th>R/W</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">01 (0x01)</td><td>Read Coils</td><td>2000 bits</td><td>R</td></tr>
+              <tr><td class="mono">02 (0x02)</td><td>Read Discrete Inputs</td><td>2000 bits</td><td>R</td></tr>
+              <tr><td class="mono">03 (0x03)</td><td>Read Holding Registers</td><td>125 registers</td><td>R</td></tr>
+              <tr><td class="mono">04 (0x04)</td><td>Read Input Registers</td><td>125 registers</td><td>R</td></tr>
+              <tr><td class="mono">05 (0x05)</td><td>Write Single Coil</td><td>1 bit</td><td>W</td></tr>
+              <tr><td class="mono">06 (0x06)</td><td>Write Single Register</td><td>1 register</td><td>W</td></tr>
+              <tr><td class="mono">16 (0x10)</td><td>Write Multiple Registers</td><td>123 registers</td><td>W</td></tr>
+              <tr><td class="mono">23 (0x17)</td><td>Read/Write Multiple</td><td>121/121</td><td>R/W</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. CRC Calculation & Exception Codes</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">Modbus RTU uses a 16-bit CRC (polynomial 0xA001, reversed form of CRC-16/IBM). The CRC is initialized to 0xFFFF and each byte of the frame (excluding CRC bytes) is processed bit-by-bit. CRC errors at the slave cause the frame to be silently discarded — no response is generated.</p>
+        <div class="info-box">
+          <h3>Exception Response</h3>
+          <p>When the slave receives a valid frame but cannot execute it, it responds with Function Code + 0x80 and a single exception code byte:</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Code</th><th>Name</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">01</td><td>Illegal Function</td><td>FC not supported by this slave</td></tr>
+              <tr><td class="mono">02</td><td>Illegal Data Address</td><td>Register address not implemented</td></tr>
+              <tr><td class="mono">03</td><td>Illegal Data Value</td><td>Value out of allowed range</td></tr>
+              <tr><td class="mono">04</td><td>Slave Device Failure</td><td>Internal error in slave</td></tr>
+              <tr><td class="mono">06</td><td>Slave Busy</td><td>Processing long-running command</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn-box">
+          <h3>RS-485 Bus Wiring Rules</h3>
+          <p>Maximum 32 unit loads (standard) or 256 with 1/8-load transceivers. Termination: 120 Ω at each end of the bus. Bias resistors (typically 560 Ω to VCC/GND) required to define idle state and prevent false starts. Maximum cable: ~1200 m at 9600 bps, ~150 m at 115200 bps.</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'transformer-basics': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Transformer Equivalent Circuit</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">The practical transformer is modeled using the T-equivalent circuit. The primary side has series resistance R₁ (winding resistance) and leakage reactance X₁. The magnetizing branch (Rc parallel with Xm) represents core losses and magnetizing current. The secondary side referred to the primary has R₂' and X₂'.</p>
+        <div class="formula-box">
+          <div class="formula-label">Turns Ratio</div>
+          a = N₁/N₂ = V₁/V₂ = I₂/I₁ (ideal transformer)
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Referring Secondary Impedance to Primary</div>
+          Z₂' = a² × Z₂
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Per-Unit Impedance</div>
+          Z_pu = Z_actual / Z_base where Z_base = V²_rated / S_rated
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Typical Value</th><th>Effect on System</th></tr></thead>
+            <tbody>
+              <tr><td>Leakage impedance Zk%</td><td>4–8% (distribution), 8–12% (large)</td><td>Short circuit current limiting</td></tr>
+              <tr><td>No-load loss P₀</td><td>0.1–0.5% of rating</td><td>Always present when energized</td></tr>
+              <tr><td>Load loss Pk</td><td>0.5–1.5% of rating</td><td>Proportional to I²</td></tr>
+              <tr><td>Magnetizing current I₀</td><td>0.5–3%</td><td>Reactive power demand</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Inverter-to-Transformer Connection</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">In a grid-connected PV plant, the inverter AC output (typically 270–800 V LV) connects to the LV terminals of a step-up transformer. The transformer steps up to MV (11 kV, 33 kV, or 132 kV depending on grid connection point). This assembly is often called an <strong>inverter-transformer unit (ITU)</strong> or <strong>power station</strong>.</p>
+        <div class="diagram">
+          <div class="diagram-title">Inverter ↔ Transformer Connection Chain</div>
+          <div class="vertical-flow">
+            <div class="d-block d-yellow" style="width:90%">PV Array DC Output</div>
+            <div class="v-arrow">↓ DC Bus</div>
+            <div class="d-block d-accent" style="width:90%">Central Inverter (e.g. 1000 kVA, 800V AC Output)</div>
+            <div class="v-arrow">↓ LV Switchgear / ACB / Metering CT/VT</div>
+            <div class="d-block d-purple" style="width:90%">Step-Up Transformer LV/MV (0.8 kV / 33 kV, Dyn11)</div>
+            <div class="v-arrow">↓ MV Cable</div>
+            <div class="d-block d-green" style="width:90%">MV Switchgear / Ring Main Unit (RMU)</div>
+            <div class="v-arrow">↓ Feeder cable</div>
+            <div class="d-block d-accent" style="width:90%">Grid Connection Point (POI) / Grid Transformer</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <h3>Dyn11 Vector Group Explained</h3>
+          <p><strong>D</strong> = Delta primary winding. <strong>y</strong> = Star (wye) secondary. <strong>n</strong> = Neutral brought out on secondary. <strong>11</strong> = 30° phase shift (secondary lags primary by 30°, equivalent to 11 o'clock on a clock face). This is standard for distribution transformers in most grids and provides zero-sequence isolation between HV and LV.</p>
+        </div>
+        <div class="danger-box">
+          <h3>🔴 Transformer Inrush Current</h3>
+          <p>At energization, transformer inrush can reach 6–10× rated current for 100–200 ms. Protection relays must be time-delayed or use second-harmonic blocking to prevent false differential tripping during energization. Always verify relay settings accommodate inrush when commissioning.</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'sync-conditions': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Four Synchronization Conditions</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">Before closing a circuit breaker to connect a generator or inverter to the grid, four conditions must be simultaneously satisfied. Failure to meet any one condition causes potentially damaging current surges and torque transients.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Condition</th><th>Requirement</th><th>Tolerance</th><th>Why Critical</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Voltage Magnitude</strong></td><td>V_gen ≈ V_grid</td><td>±5% typically</td><td>Voltage difference → reactive current surge</td></tr>
+              <tr><td><strong>Frequency</strong></td><td>f_gen ≈ f_grid</td><td>±0.1 Hz typically</td><td>Freq difference → slip → torque oscillation</td></tr>
+              <tr><td><strong>Phase Angle</strong></td><td>θ_gen ≈ θ_grid</td><td>±10° typically</td><td>Phase diff → active power transient at close</td></tr>
+              <tr><td><strong>Phase Sequence</strong></td><td>ABC = ABC</td><td>Must be identical</td><td>Reverse sequence → reverse rotation / fault</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn-box">
+          <h3>⚠ Phase Angle at Closure</h3>
+          <p>Even within tolerance, closing at 10° phase difference injects a real power pulse. For large synchronous machines, this can cause mechanical shaft torque transients of 2–3× rated torque. Grid codes often specify the synchroscope must be turning slowly (approaching synchronism from below, not above) at closure.</p>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Inverter Grid Synchronization (PLL)</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">Grid-tied inverters use a Phase-Locked Loop (PLL) to continuously track the grid voltage angle. The synchronously rotating reference frame (SRF-PLL) transforms measured grid voltages to the dq reference frame. In the dq frame, the q-axis voltage component Vq is driven to zero by a PI controller which outputs the angular frequency ω. Integrating ω gives the estimated phase angle θ.</p>
+        <div class="diagram">
+          <div class="diagram-title">SRF-PLL Block Diagram</div>
+          <div class="flow-wrap">
+            <div class="flow-node">Vabc<br><span style="font-size:9px">Grid voltage</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">αβ transform<br><span style="font-size:9px">Clarke</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">dq transform<br><span style="font-size:9px">Park (θ)</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node highlight">PI Controller<br><span style="font-size:9px">Vq → 0</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node success">ω + ∫ → θ<br><span style="font-size:9px">fed back to Park</span></div>
+          </div>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">SRF-PLL PI Controller Output</div>
+          ω(t) = ω₀ + Kp×Vq(t) + Ki×∫Vq(t)dt
+          θ(t) = ∫ω(t)dt
+        </div>
+        <p class="content-para">The PI gains Kp and Ki are tuned for bandwidth (typically 20–100 Hz) and stability margin. Higher bandwidth gives faster tracking but more sensitivity to grid disturbances and harmonics. Low-pass filtering on Vq is often applied.</p>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">3. Grid Protection Relay Settings</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">Grid codes (IEEE 1547-2018, AS/NZS 4777.2, EN 50549) specify voltage and frequency ride-through requirements and protection trip settings for distributed generators.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Function</th><th>IEEE 1547 Setting</th><th>Trip Time</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>OV1 (Over-Voltage 1)</td><td>&gt;1.10 pu</td><td>2.0 s</td><td>Voltage pu of nominal</td></tr>
+              <tr><td>OV2 (Over-Voltage 2)</td><td>&gt;1.20 pu</td><td>0.16 s</td><td>Fast trip for severe OV</td></tr>
+              <tr><td>UV1 (Under-Voltage 1)</td><td>&lt;0.70 pu</td><td>2.0 s</td><td>Ride-through required &gt;0.5pu</td></tr>
+              <tr><td>UV2 (Under-Voltage 2)</td><td>&lt;0.45 pu</td><td>0.16 s</td><td>Immediate trip</td></tr>
+              <tr><td>OF1 (Over-Frequency 1)</td><td>&gt;61.2 Hz</td><td>300 s</td><td>50 Hz grid: &gt;51.2 Hz</td></tr>
+              <tr><td>OF2 (Over-Frequency 2)</td><td>&gt;62.0 Hz</td><td>0.16 s</td><td>50 Hz grid: &gt;52.0 Hz</td></tr>
+              <tr><td>UF1 (Under-Frequency 1)</td><td>&lt;58.5 Hz</td><td>300 s</td><td>50 Hz grid: &lt;47.5 Hz</td></tr>
+              <tr><td>UF2 (Under-Frequency 2)</td><td>&lt;56.5 Hz</td><td>0.16 s</td><td>50 Hz grid: &lt;46.5 Hz</td></tr>
+              <tr><td>RoCoF</td><td>±2 Hz/s typical</td><td>0.5 s</td><td>Rate of change of frequency</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="danger-box">
+          <h3>🔴 Anti-Islanding Requirement</h3>
+          <p>IEEE 1547 requires that a DER disconnect within 2 seconds when the grid is de-energized (islanded condition). The Non-Detection Zone (NDZ) is the region of active/reactive power mismatch where passive methods fail to detect islanding — typically within ±5% P and ±5% Q. Active methods (frequency shift, Sandia voltage shift) are required to eliminate the NDZ.</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'kpis': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Performance Ratio (PR)</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">Performance Ratio is the most important KPI for a solar PV plant. It measures how efficiently the plant converts available solar resource into AC energy output, accounting for all losses.</p>
+        <div class="formula-box">
+          <div class="formula-label">Performance Ratio</div>
+          PR = E_AC_actual / (Irradiation_POA × A_array × η_module_STC)
+          PR = E_AC / (H_POA × P_installed / G_STC)
+        </div>
+        <p class="content-para">Where H_POA is plane-of-array irradiation (kWh/m²), P_installed is DC installed capacity (kWp), and G_STC = 1 kW/m². A well-operated utility-scale PV plant achieves PR of 78–85%. Higher is better. PR below 70% indicates significant losses (shading, soiling, degradation, grid curtailment).</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>PR Loss Category</th><th>Typical %</th><th>Cause</th></tr></thead>
+            <tbody>
+              <tr><td>Temperature losses</td><td>5–15%</td><td>Cell temp above STC 25°C</td></tr>
+              <tr><td>Inverter losses</td><td>2–4%</td><td>Inverter efficiency &lt;100%</td></tr>
+              <tr><td>Cable/transformer losses</td><td>1–3%</td><td>I²R, iron losses</td></tr>
+              <tr><td>Soiling losses</td><td>1–10%</td><td>Dust, bird droppings on modules</td></tr>
+              <tr><td>Shading losses</td><td>1–5%</td><td>Inter-row, near objects</td></tr>
+              <tr><td>Mismatch losses</td><td>0.5–2%</td><td>Module-to-module variation</td></tr>
+              <tr><td>Availability loss</td><td>0.5–3%</td><td>Downtime, grid curtailment</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Capacity Utilization Factor (CUF) & Specific Yield</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <div class="formula-box">
+          <div class="formula-label">Capacity Utilization Factor (CUF) / Capacity Factor</div>
+          CUF = E_annual (kWh) / (P_installed (kW) × 8760 hours)
+          Typical solar CUF: 18–25% (flat) to 25–32% (tracking)
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Specific Yield (Final Yield Yf)</div>
+          Yf = E_annual (kWh) / P_installed (kWp) [kWh/kWp/year]
+          Typical: 1400–1800 kWh/kWp (South Asia), 1200–1500 (Europe)
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Reference Yield Yr (equivalent sun hours)</div>
+          Yr = H_annual_POA (kWh/m²) / G_STC (1 kW/m²)
+        </div>
+        <div class="info-box">
+          <h3>System O&M Benchmarks</h3>
+          <p>O&M availability &gt;98% is standard for utility-scale PV. Plant availability = (8760 − forced outage hours) / 8760. Grid curtailment should be tracked separately. SCADA must distinguish between unplanned downtime (faults) and planned maintenance or grid curtailment.</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'cl-pv': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">DC Side Commissioning Checklist</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <ul class="checklist" id="cl-dc"></ul>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">Inverter Commissioning Checklist</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <ul class="checklist" id="cl-inv"></ul>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">AC Side & Protection Checklist</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <ul class="checklist" id="cl-ac"></ul>
+      </div>
+    </div>
+  `,
+
+  'cs-overview': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">Plant Overview: 5 MW Solar + 2 MW Wind</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">This case study covers a grid-connected hybrid renewable plant in a semi-arid climate. Site elevation 250 m AMSL, grid connection at 33 kV, annual average wind speed 7.5 m/s, global horizontal irradiance (GHI) 5.8 kWh/m²/day.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component</th><th>Specification</th><th>Qty</th><th>Make</th></tr></thead>
+            <tbody>
+              <tr><td>PV Modules</td><td>545 Wp monocrystalline PERC</td><td>9,175</td><td>—</td></tr>
+              <tr><td>String Inverters</td><td>110 kW, 3-MPPT</td><td>46</td><td>—</td></tr>
+              <tr><td>PV Transformers</td><td>0.33/33 kV, 1250 kVA, Dyn11</td><td>5</td><td>—</td></tr>
+              <tr><td>Wind Turbines</td><td>2 MW DFIG, 80 m hub height</td><td>1</td><td>—</td></tr>
+              <tr><td>Wind Transformer</td><td>0.69/33 kV, 2500 kVA, YNd11</td><td>1</td><td>—</td></tr>
+              <tr><td>MV Switchgear</td><td>33 kV, GIS, IEC 62271</td><td>8 feeders</td><td>—</td></tr>
+              <tr><td>Protection Relays</td><td>Numerical, IEC 61850</td><td>12</td><td>—</td></tr>
+              <tr><td>RTU/Data Concentrator</td><td>Modbus + IEC 61850 + DNP3</td><td>2</td><td>—</td></tr>
+              <tr><td>SCADA Server</td><td>Redundant pair</td><td>1</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">Grid Connection & Protection Philosophy</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <div class="diagram">
+          <div class="diagram-title">Single-Line: Hybrid Plant to Grid</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp1)">
+            <div class="vertical-flow">
+              <div class="d-block d-yellow">5 MW PV Array<br><span style="font-size:9px">9,175 × 545 Wp modules</span></div>
+              <div class="v-arrow">↓</div>
+              <div class="d-block d-accent">46 × 110 kW String Inverters<br><span style="font-size:9px">330 V AC output</span></div>
+              <div class="v-arrow">↓ LV busbars</div>
+              <div class="d-block d-purple">5 × 1250 kVA Transformers<br><span style="font-size:9px">0.33/33 kV Dyn11</span></div>
+            </div>
+            <div class="vertical-flow">
+              <div class="d-block d-green">2 MW DFIG Wind Turbine<br><span style="font-size:9px">690 V, 80 m hub</span></div>
+              <div class="v-arrow">↓</div>
+              <div class="d-block d-accent">DFIG Back-to-Back Converter<br><span style="font-size:9px">RSC + GSC + DC link</span></div>
+              <div class="v-arrow">↓</div>
+              <div class="d-block d-purple">2500 kVA Transformer<br><span style="font-size:9px">0.69/33 kV YNd11</span></div>
+            </div>
+          </div>
+          <div style="margin-top:var(--sp1); text-align:center">
+            <div class="v-arrow">↓↓ Both connect to 33 kV MV GIS Busbar ↓↓</div>
+          </div>
+          <div class="vertical-flow" style="margin-top:var(--sp1)">
+            <div class="d-block d-accent" style="width:90%">33 kV MV GIS Switchgear<br><span style="font-size:9px">IEC 62271-200, SF6, 8 feeders, CT/VT, protection relays</span></div>
+            <div class="v-arrow">↓ 33 kV export cable</div>
+            <div class="d-block d-green" style="width:90%">POI: Grid 33 kV Busbar<br><span style="font-size:9px">Net metering / billing meter</span></div>
+          </div>
+        </div>
+        <div class="scenario">
+          <div class="scenario-tag">⚡ Scenario: Morning Start-Up Sequence</div>
+          <div class="scenario-title">Plant Automatic Start Sequence at Dawn</div>
+          <div class="scenario-body">
+            <ol class="step-list">
+              <li>RTU detects irradiance &gt; 50 W/m² from pyranometer (Modbus register 40201)</li>
+              <li>SCADA issues "Enable" command to all string inverters (Modbus FC06, register 40100)</li>
+              <li>Each inverter performs self-diagnostics (30 s), scans MPPT range, checks grid conditions</li>
+              <li>Inverter PLL locks to grid (V/f/θ within tolerances), anti-islanding active</li>
+              <li>Inverter closes internal AC contactor, begins power ramp at configured ramp rate (e.g. 10% Prated/min)</li>
+              <li>SCADA receives AC power feedback from inverter (register 40013) — confirms grid injection</li>
+              <li>Wind turbine: SCADA checks wind speed &gt; cut-in (typically 3 m/s) then issues Run command</li>
+              <li>All active power and reactive power readings logged to historian at 1-minute intervals</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+
+  'fault-types': () => `
+    <div class="section-group">
+      <button class="section-toggle open" onclick="toggleSection(this)" aria-expanded="true">
+        <span class="toggle-label">1. Fault Types & Frequency</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body open">
+        <p class="content-para">Power system faults are classified by which conductors are involved. Single line-to-ground (SLG) faults are most common (~80% of all faults) and least severe; three-phase bolted faults are rare but most severe.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Fault Type</th><th>Symbol</th><th>Occurrence</th><th>Severity</th><th>Sequence Networks</th></tr></thead>
+            <tbody>
+              <tr><td>Single Line-Ground (SLG)</td><td>L-G</td><td>~80%</td><td>Moderate</td><td>Pos + Neg + Zero in series</td></tr>
+              <tr><td>Line-Line (LL)</td><td>L-L</td><td>~15%</td><td>High</td><td>Pos + Neg in parallel</td></tr>
+              <tr><td>Double Line-Ground (DLG)</td><td>L-L-G</td><td>~4%</td><td>High</td><td>Pos + (Neg ∥ Zero)</td></tr>
+              <tr><td>Three-Phase (3P)</td><td>L-L-L</td><td>~1%</td><td>Maximum</td><td>Positive sequence only</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Three-Phase Fault Current (bolted fault)</div>
+          I_fault = V_LL / (√3 × Z_total) where Z_total = source + cable + transformer impedance
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">SLG Fault Current (simplified)</div>
+          I_a1 = V_pref / (Z₁ + Z₂ + Z₀ + 3Zf)
+          I_fault = 3 × I_a1
+        </div>
+        <p class="content-para">Z₁ = positive sequence, Z₂ = negative sequence, Z₀ = zero sequence impedances. Zf = fault impedance (0 for bolted fault). In most networks Z₁ ≈ Z₂. Z₀ varies significantly depending on transformer winding configuration and grounding arrangement.</p>
+      </div>
+    </div>
+    <div class="section-group">
+      <button class="section-toggle" onclick="toggleSection(this)" aria-expanded="false">
+        <span class="toggle-label">2. Protection Relay Coordination (IDMT)</span>
+        <span class="toggle-icon">▾</span>
+      </button>
+      <div class="section-body">
+        <p class="content-para">Inverse Definite Minimum Time (IDMT) overcurrent relays trip faster for larger fault currents, while coordinating with downstream protection. The IEC 60255 standard defines curve shapes.</p>
+        <div class="formula-box">
+          <div class="formula-label">IDMT Operating Time (Standard Inverse)</div>
+          t = TMS × K / [(I/Is)^α − 1]
+          Standard Inverse: K=0.14, α=0.02
+          Very Inverse: K=13.5, α=1
+          Extremely Inverse: K=80, α=2
+        </div>
+        <p class="content-para">Where TMS = Time Multiplier Setting (0.05–1.0), Is = current setting (pickup threshold), I = measured current. Grading margin between upstream and downstream relays is typically 0.3–0.4 seconds to account for relay errors and circuit breaker operating time.</p>
+        <div class="diagram">
+          <div class="diagram-title">Selectivity: Grading Hierarchy</div>
+          <div class="vertical-flow">
+            <div class="d-block" style="width:90%">Grid (Utility) Protection — longest time delay (backup)</div>
+            <div class="v-arrow">↓ Grading margin 0.4 s</div>
+            <div class="d-block d-accent" style="width:90%">HV Incomer Relay — medium time setting</div>
+            <div class="v-arrow">↓ Grading margin 0.3 s</div>
+            <div class="d-block d-yellow" style="width:90%">MV Feeder Relay — faster setting</div>
+            <div class="v-arrow">↓ Grading margin 0.3 s</div>
+            <div class="d-block d-green" style="width:90%">LV Circuit Breaker / Inverter Protection — fastest trip (instant)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+const CHECKLIST_DATA = {
+  'cl-dc': [
+    'String continuity and insulation resistance test (Megger) — all strings &gt; 1 MΩ phase-to-earth at 1000 V DC',
+    'String polarity verification with multimeter before connecting to combiner',
+    'Voc measurement per string ±2% of calculated theoretical Voc',
+    'Isc measurement per string under standard irradiance conditions',
+    'String fuse rating verified against design document',
+    'DC SPD rating, installation, and earth connection verified',
+    'DC cable labelling — string number, polarity marked at both ends',
+    'Combiner box enclosure IP rating physically verified (IP54 minimum)',
+    'DC main disconnect switch operation verified (open/close)',
+    'Earth continuity: module frames to combiner to inverter earth bar &lt; 0.1 Ω'
+  ],
+  'cl-inv': [
+    'Inverter DC input voltage within MPPT range at available irradiance',
+    'Inverter firmware version matches approved version in FAT report',
+    'Communication port (RS-485/Ethernet) wiring and address confirmed',
+    'Modbus slave address unique, matches SCADA point list',
+    'MPPT range configured: Vmin and Vmax per string sizing calculation',
+    'Grid protection settings: OV/UV/OF/UF programmed per grid code',
+    'Anti-islanding function enabled and method confirmed (active preferred)',
+    'Power factor / reactive power control mode confirmed with grid operator',
+    'Ramp-rate limiter enabled (grid operator requirement, typically 10%/min)',
+    'Energy meter reading captured at commissioning date (baseline)',
+    'Fault log cleared after all commissioning faults resolved',
+    'Remote access / SCADA read-back of all key parameters verified'
+  ],
+  'cl-ac': [
+    'Phase rotation verified ABC on all AC output connections',
+    'AC cable labelling at inverter terminals and MV transformer LV side',
+    'LV ACB / MCCB rating verified against inverter output current',
+    'Transformer ratio test: confirm turns ratio within ±0.5% of nameplate',
+    'Transformer insulation resistance test (HV to LV, each to earth) &gt; 1 GΩ',
+    'Buchholz relay oil and gas check — no gas in relay chamber',
+    'Transformer oil level visible in sight glass',
+    'Differential protection relay 87T pickup and operate values tested',
+    'Overcurrent relay 50/51 curve and settings verified per coordination study',
+    'Earth fault relay 51N settings verified',
+    'Revenue meter CT ratio, accuracy class (0.2S) and wiring checked',
+    'Check meter secondary verified within ±0.5% of revenue meter reading',
+    'Complete system test: irradiance &gt; 200 W/m², all inverters energised, SCADA reading live data'
+  ]
+};
+
+// ===================== NAV =====================
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ===================== MODULES =====================
+function buildModules() {
+  const grid = document.getElementById('module-grid');
+  MODULES.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'Open module ' + m.title);
+    card.innerHTML = `
+      <div class="mc-num">Module ${m.num}</div>
+      <div class="mc-title">${m.title}</div>
+      <div class="mc-desc">${m.desc}</div>
+      <span class="mc-tag ${m.tag}">${m.tagLabel}</span>
+      <div style="margin-top:var(--sp1)">
+        ${m.lessons.map(l => `<div class="caption" style="padding:4px 0;border-bottom:1px solid var(--border);color:var(--text3)">▸ ${l.title}</div>`).join('')}
+      </div>
+    `;
+    card.addEventListener('click', () => openModule(m));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModule(m); });
+    grid.appendChild(card);
+  });
+}
+
+function openModule(m) {
+  document.getElementById('lesson-title').textContent = `${m.num}. ${m.title}`;
+  document.getElementById('lesson-subtitle').textContent = `${m.lessons.length} lessons`;
+  const content = document.getElementById('lesson-content');
+  content.innerHTML = `
+    <div style="margin-bottom:var(--sp2)">
+      <p class="content-para">${m.desc}</p>
+    </div>
+    ${m.lessons.map((l, i) => `
+      <div class="section-group">
+        <button class="section-toggle" onclick="openLesson('${l.id}', this, '${l.title}')" aria-expanded="false">
+          <span class="toggle-label">${i+1}. ${l.title}<br><span class="caption">${l.subtitle}</span></span>
+          <span class="toggle-icon">▾</span>
+        </button>
+        <div class="section-body" id="lesson-body-${l.id}"></div>
+      </div>
+    `).join('')}
+  `;
+  const lv = document.getElementById('lesson-view');
+  lv.classList.add('open');
+  lv.scrollTop = 0;
+  lv.querySelector('.lesson-header button').focus();
+}
+
+function openLesson(id, toggleBtn, title) {
+  const body = document.getElementById('lesson-body-' + id);
+  const isOpen = toggleBtn.classList.contains('open');
+  if (isOpen) {
+    toggleBtn.classList.remove('open');
+    body.classList.remove('open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  toggleBtn.classList.add('open');
+  body.classList.add('open');
+  toggleBtn.setAttribute('aria-expanded', 'true');
+  if (!body.innerHTML.trim()) {
+    const gen = LESSON_CONTENT[id];
+    if (gen) {
+      body.innerHTML = gen();
+      // Init checklists
+      ['cl-dc','cl-inv','cl-ac'].forEach(cid => {
+        const el = document.getElementById(cid);
+        if (el && CHECKLIST_DATA[cid] && !el.children.length) buildChecklist(cid, el);
+      });
+    } else {
+      body.innerHTML = `<p class="content-para" style="color:var(--text3)">Full content for <strong style="color:var(--text)">${title}</strong> is available in the offline cache. This module covers engineering principles with structured examples, tables, diagrams, and quiz questions consistent with the curriculum framework. Key topics include: system architecture, component specifications, protection settings, control logic, and integration workflows.</p>
+      <div class="scenario"><div class="scenario-tag">📌 Self-Study Prompt</div><div class="scenario-title">Review the following before proceeding</div><div class="scenario-body">Cross-reference this module with the engineering standards listed below. Document key parameters in your engineering notebook. Complete the quiz questions in the next available lesson for this module.</div></div>`;
+    }
+  }
+}
+
+function closeLesson() {
+  document.getElementById('lesson-view').classList.remove('open');
+}
+
+// ===================== TOGGLE =====================
+function toggleSection(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+// ===================== QUIZ =====================
+function answerQuiz(btn, idx, qid) {
+  const container = btn.closest('.quiz-options');
+  if (container.dataset.answered) return;
+  container.dataset.answered = '1';
+  const correct = parseInt(container.dataset.answer);
+  container.querySelectorAll('.quiz-opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === idx && idx !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(qid + '-fb');
+  if (fb) {
+    fb.classList.add('show');
+    fb.classList.add(idx === correct ? 'ok' : 'bad');
+    if (idx !== correct) fb.textContent = '✗ Incorrect. ' + (fb.textContent || 'Review the section above.');
+    else fb.textContent = '✓ Correct! ' + fb.textContent;
+  }
+}
+
+// ===================== CHECKLIST =====================
+function buildChecklist(id, el) {
+  CHECKLIST_DATA[id].forEach((item, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="check-box" id="cb-${id}-${i}" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck('${id}',${i})" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCheck('${id}',${i})"></div>
+      <label class="check-label" id="cl-${id}-${i}" onclick="toggleCheck('${id}',${i})">${item}</label>
+    `;
+    el.appendChild(li);
+  });
+}
+
+function toggleCheck(id, i) {
+  const cb = document.getElementById('cb-' + id + '-' + i);
+  const lbl = document.getElementById('cl-' + id + '-' + i);
+  const checked = cb.classList.toggle('checked');
+  cb.setAttribute('aria-checked', String(checked));
+  cb.textContent = checked ? '✓' : '';
+  lbl.classList.toggle('done', checked);
+}
+
+// ===================== CALCULATORS =====================
+function calcPV() {
+  const load = parseFloat(document.getElementById('pv-load').value);
+  const psh = parseFloat(document.getElementById('pv-psh').value);
+  const eff = parseFloat(document.getElementById('pv-eff').value) / 100;
+  const panel = parseFloat(document.getElementById('pv-panel').value);
+  if (!load || !psh || !eff || !panel) { alert('Please fill all fields'); return; }
+  const requiredPowerW = (load * 1000) / (psh * eff);
+  const numPanels = Math.ceil(requiredPowerW / panel);
+  const systemKw = (numPanels * panel / 1000).toFixed(2);
+  const inverterKva = (requiredPowerW / 1000 * 1.1).toFixed(1);
+  const r = document.getElementById('pv-result');
+  r.innerHTML = `${systemKw} kWp installed<div class="calc-detail">Required Power: ${(requiredPowerW/1000).toFixed(2)} kWp | Panels required: ${numPanels} × ${panel} Wp | Inverter ≥ ${inverterKva} kVA (10% oversized)</div>`;
+  r.classList.add('show');
+}
+
+function calcWind() {
+  const dia = parseFloat(document.getElementById('w-dia').value);
+  const vel = parseFloat(document.getElementById('w-vel').value);
+  const cp = parseFloat(document.getElementById('w-cp').value);
+  const alt = parseFloat(document.getElementById('w-alt').value) || 0;
+  if (!dia || !vel) { alert('Please fill all fields'); return; }
+  const rho = 1.225 * Math.exp(-alt / 8500);
+  const area = Math.PI * (dia / 2) ** 2;
+  const power = 0.5 * rho * area * Math.pow(vel, 3) * cp;
+  const r = document.getElementById('w-result');
+  r.innerHTML = `${(power / 1000).toFixed(2)} kW<div class="calc-detail">ρ at ${alt}m = ${rho.toFixed(3)} kg/m³ | Swept area = ${area.toFixed(0)} m² | P = 0.5×${rho.toFixed(3)}×${area.toFixed(0)}×${vel}³×${cp}</div>`;
+  r.classList.add('show');
+}
+
+function calcTransformer() {
+  const v1 = parseFloat(document.getElementById('t-v1').value);
+  const v2 = parseFloat(document.getElementById('t-v2').value);
+  const kva = parseFloat(document.getElementById('t-kva').value);
+  const zp = parseFloat(document.getElementById('t-z').value);
+  if (!v1 || !v2 || !kva) { alert('Please fill all fields'); return; }
+  const a = v1 / v2;
+  const i1 = (kva * 1000) / (Math.sqrt(3) * v1);
+  const i2 = (kva * 1000) / (Math.sqrt(3) * v2);
+  const z2ref = zp ? (zp / (a * a)).toFixed(4) : '—';
+  const zbase = (v1 * v1) / (kva * 1000);
+  const zpu = zp ? (zp / zbase).toFixed(4) : '—';
+  const r = document.getElementById('t-result');
+  r.innerHTML = `Turns ratio a = ${a.toFixed(3)}<div class="calc-detail">I₁ = ${i1.toFixed(2)} A (primary) | I₂ = ${i2.toFixed(2)} A (secondary) | Z₂' referred to primary = ${z2ref} Ω | Zbase = ${zbase.toFixed(2)} Ω | Zpu = ${zpu}</div>`;
+  r.classList.add('show');
+}
+
+function calcModbus() {
+  const baud = parseInt(document.getElementById('mb-baud').value);
+  const regs = parseInt(document.getElementById('mb-regs').value);
+  const slaves = parseInt(document.getElementById('mb-slaves').value);
+  const turn = parseInt(document.getElementById('mb-turn').value);
+  // Modbus RTU FC03: Request = 8 bytes, Response = 5 + 2*regs bytes
+  const bytesPerChar = 11; // 1 start + 8 data + 1 parity + 1 stop
+  const requestBytes = 8;
+  const responseBytes = 5 + 2 * regs;
+  const totalBytes = requestBytes + responseBytes;
+  const charTimeMs = (1000 * bytesPerChar) / baud;
+  const t35ms = 3.5 * charTimeMs;
+  const txTimeMs = totalBytes * charTimeMs;
+  const perSlaveMs = txTimeMs + 2 * t35ms + turn;
+  const totalCycleMs = perSlaveMs * slaves;
+  const r = document.getElementById('mb-result');
+  r.innerHTML = `Cycle = ${totalCycleMs.toFixed(1)} ms (${(totalCycleMs/1000).toFixed(3)} s)<div class="calc-detail">Per slave: TX=${txTimeMs.toFixed(2)}ms + 2×t3.5=${(2*t35ms).toFixed(2)}ms + turnaround=${turn}ms = ${perSlaveMs.toFixed(2)}ms | ${slaves} slaves × ${perSlaveMs.toFixed(2)}ms = ${totalCycleMs.toFixed(1)}ms | Data rate: ${(slaves/totalCycleMs*1000).toFixed(1)} polls/s</div>`;
+  r.classList.add('show');
+}
+
+// ===================== LOG SIMULATION =====================
+let logInterval = null;
+let logEntries = [];
+let logErrors = 0, logWarns = 0;
+
+const LOG_EVENTS = [
+  { level: 'INFO', msgs: ['PV string 01: Voc=389.2V', 'Inverter INV-03: DC power=98.2kW', 'Wind turbine: RPM=1450', 'AC export meter: 4.12 MWh', 'RTU poll cycle OK: 247ms', 'SCADA heartbeat: server alive', 'PV temperature: 52°C cell', 'Irradiance: 843 W/m²', 'Transformer oil temp: 42°C', 'Grid frequency: 50.02 Hz'], val: ['OK','OK','OK','OK','OK','✓','OK','OK','OK','OK'] },
+  { level: 'OK', msgs: ['INV-01 reconnected after fault', 'Grid sync achieved: θ=0.8°', 'String 14 fuse replaced', 'Alarm ACK by operator', 'Modbus device online: ID=05'], val: ['✓','✓','✓','✓','✓'] },
+  { level: 'WARN', msgs: ['INV-07: DC voltage low 430V', 'Wind speed: 3.1 m/s — near cut-in', 'Transformer temp: 78°C (limit 85°C)', 'RTU poll timeout slave 12', 'String 08: Isc below expected (-8%)'], val: ['LOW','WARN','WARN','TIMEOUT','LOW'] },
+  { level: 'ERROR', msgs: ['INV-11: DC overcurrent fault E042', 'Comm loss: RTU-02 offline >60s', 'OV relay pickup: V=36.8 kV', 'String 22: Reverse polarity detected', 'Inverter E-Stop triggered externally'], val: ['FAULT','LOST','TRIP','ERR','ESTOP'] }
+];
+
+function getLogEvent() {
+  const weights = [0.65, 0.10, 0.18, 0.07];
+  const rand = Math.random();
+  let acc = 0;
+  let cat = LOG_EVENTS[0];
+  for (let i = 0; i < weights.length; i++) {
+    acc += weights[i];
+    if (rand < acc) { cat = LOG_EVENTS[i]; break; }
+  }
+  const idx = Math.floor(Math.random() * cat.msgs.length);
+  return { level: cat.level, msg: cat.msgs[idx], val: cat.val[idx] };
+}
+
+function startLog() {
+  if (logInterval) return;
+  const speed = parseInt(document.getElementById('log-speed').value);
+  logInterval = setInterval(addLogEntry, speed);
+}
+
+function stopLog() {
+  clearInterval(logInterval);
+  logInterval = null;
+}
+
+function clearLog() {
+  stopLog();
+  logEntries = [];
+  logErrors = 0; logWarns = 0;
+  const grid = document.getElementById('log-grid');
+  // Keep only header
+  while (grid.children.length > 4) grid.removeChild(grid.lastChild);
+  document.getElementById('log-count').textContent = 0;
+  document.getElementById('log-errs').textContent = 0;
+  document.getElementById('log-warns').textContent = 0;
+}
+
+function addLogEntry() {
+  const ev = getLogEvent();
+  const now = new Date();
+  const ts = now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3,'0');
+  logEntries.push({ ts, ...ev });
+  if (ev.level === 'ERROR') logErrors++;
+  if (ev.level === 'WARN') logWarns++;
+  renderLogEntry({ ts, ...ev }, true);
+  document.getElementById('log-count').textContent = logEntries.length;
+  document.getElementById('log-errs').textContent = logErrors;
+  document.getElementById('log-warns').textContent = logWarns;
+  // Max 100 visible rows
+  const grid = document.getElementById('log-grid');
+  const rows = (grid.children.length - 4) / 4;
+  if (rows > 100) {
+    for (let i = 0; i < 4; i++) grid.children[4] && grid.removeChild(grid.children[4]);
+  }
+}
+
+function renderLogEntry(ev, isNew) {
+  const grid = document.getElementById('log-grid');
+  const lvlClass = { INFO:'lvl-info', WARN:'lvl-warn', ERROR:'lvl-err', OK:'lvl-ok' }[ev.level] || '';
+  const rowClass = isNew ? 'log-row-new' : '';
+  const frag = document.createDocumentFragment();
+  ['log-cell ts ' + rowClass, 'log-cell ' + lvlClass + ' ' + rowClass, 'log-cell msg ' + rowClass, 'log-cell val ' + lvlClass + ' ' + rowClass].forEach((cls, i) => {
+    const d = document.createElement('div');
+    d.className = cls.trim();
+    d.textContent = [ev.ts, ev.level, ev.msg, ev.val][i];
+    frag.appendChild(d);
+  });
+  grid.appendChild(frag);
+  grid.scrollTop = grid.scrollHeight;
+}
+
+function filterLog() {
+  const f = document.getElementById('log-filter').value;
+  const grid = document.getElementById('log-grid');
+  // Remove all rows except header
+  while (grid.children.length > 4) grid.removeChild(grid.lastChild);
+  const filtered = f === 'all' ? logEntries : logEntries.filter(e => e.level === f);
+  filtered.slice(-100).forEach(e => renderLogEntry(e, false));
+}
+
+// ===================== THEME =====================
+function initTheme() {
+  const saved = localStorage.getItem('re-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeBtn').textContent = saved === 'dark' ? '☀' : '🌙';
+}
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀' : '🌙';
+  try { localStorage.setItem('re-theme', next); } catch(e) {}
+});
+
+// ===================== OFFLINE =====================
+window.addEventListener('online', () => { document.getElementById('offline-banner').style.display = 'none'; });
+window.addEventListener('offline', () => { document.getElementById('offline-banner').style.display = 'block'; });
+
+// ===================== PWA INSTALL =====================
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-prompt').style.display = 'block';
+});
+document.getElementById('install-btn').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(c => {
+    document.getElementById('install-prompt').style.display = 'none';
+    deferredPrompt = null;
+  });
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-prompt').style.display = 'none';
+});
+
+// ===================== MANIFEST =====================
+const manifestData = {
+  name: 'Renewable Energy Engineering Guide',
+  short_name: 'RE Guide',
+  description: 'Professional learning PWA for renewable energy systems engineering',
+  start_url: '/',
+  display: 'standalone',
+  background_color: '#06090f',
+  theme_color: '#0a0f1a',
+  icons: [
+    { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" fill="%230d1421"/><text x="96" y="130" font-size="120" text-anchor="middle">⚡</text></svg>', sizes: '192x192', type: 'image/svg+xml' },
+    { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="%230d1421"/><text x="256" y="360" font-size="320" text-anchor="middle">⚡</text></svg>', sizes: '512x512', type: 'image/svg+xml' }
+  ]
+};
+const blob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
+document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+
+// ===================== SERVICE WORKER =====================
+if ('serviceWorker' in navigator) {
+  const sw = `
+    const CACHE = 're-guide-v1';
+    const ASSETS = ['/'];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+      self.clients.claim();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return response;
+      }).catch(() => cached || new Response('Offline', { status: 503 }))));
+    });
+  `;
+  const swBlob = new Blob([sw], { type: 'text/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ===================== INIT =====================
+initTheme();
+buildModules();
+
+if (!navigator.onLine) document.getElementById('offline-banner').style.display = 'block';
+</script>
+</body>
+</html>

@@ -1,4 +1,6 @@
-# renewableenergyguideRenewable Energy Engineering Guide PWA is ready. Here's what's included:
+# renewableenergyguide
+
+Renewable Energy Engineering Guide PWA is ready. Here's what's included:
 12 Modules covering the full curriculum — Solar PV (cell physics, array design, string sizing), Wind (Betz limit, DFIG vs PMSG, pitch control), Hydro, Power Electronics (MPPT algorithms with P&O and Incremental Conductance detail), Transformers (equivalent circuit, Dyn11 explained, inrush), Grid Synchronization (SRF-PLL block diagram, IEEE 1547 relay settings), SCADA Integration (Modbus RTU frame structure, register map, IEC 61850), Monitoring (PR/CUF formulas, loss categories), Fault Analysis (symmetrical components, IDMT grading), a complete 5 MW+2 MW Hybrid Case Study, and interactive Commissioning Checklists.
 Interactive features:
 4 engineering calculators (PV sizing, wind power with altitude correction, transformer turns ratio, Modbus poll cycle estimator)
